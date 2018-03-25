@@ -1,29 +1,55 @@
-# unluac-docker: Dockerized luac decompiler 
+# unluac: Luac decompiler 
 
-This is a dockerized version of an old (`unluac_2015_06_13.jar`) version of [unluac](https://sourceforge.net/projects/unluac/).
+Unluac-d - a dockerized version of unluac for decompiling luac files from wherigo containers regardless of the execution environment. 
 
-The purpose is to make it easy to complie luac files extracted from wherigo containers regardless of execution environment.
+Currently, consists of an old binary version of [unluac](https://sourceforge.net/projects/unluac/) (`unluac_2015_06_13.jar`) dockerized, in two different ways:
+* `unluac-docker/` a dockerfile for creating standard docker image that
+  * reads input (luac file) from bind-mount and 
+  * prints results to STDOUT
+* `unluac-docker-faas/` a dockerfile for creating "function-as-a-service" docker image where unluac is wrapped with [OpenFaas](https://github.com/openfaas/faas)'s [function watchdog](https://github.com/openfaas/faas/tree/master/watchdog) to 
+  * read input (luac file) from HTTP POST request
+  * send results to HTTP POST response
+
+The purpose is to make it easy to decompile luac files extracted from wherigo containers regardless of the execution environment.
 
 ## Usage
-### Build docker image locally
-`docker build -t mrummuka/unluac-docker .`
+### unluac-docker: 
 
-### Run dockerized
-`docker run --rm -v /path/to/luacdir/:/data mrummuka/unluac-docker:latest`
+#### Build docker image
+  
+   `cd unluac-docker && docker build -t mrummuka/unluac-docker .`
 
-.. decompiles cartridge.luac to STDOUT 
+#### Run docker container to decompile luac
 
+   `docker run --rm -v /path/to/luacdir/:/data mrummuka/unluac-docker:latest`
 
-**Note: unluac-docker expects to find cartridge.luac from /path/to/luacdir/**
+**Note: unluac-docker expects to find `cartridge.luac` in `/path/to/luacdir/`**
 
+### unluac-docker-faas: 
+#### Build docker image
+  
+  `cd unluac-docker-faas && docker build -t mrummuka/unluac-docker-faas .`
+  
+#### Start docker container
+
+    `docker run --rm -p 8080:8080 mrummuka/unluac-docker-faas:latest`
+
+#### Decompile using "faas" docker container
+    `curl -XPOST --data-binary @cartridge.luac localhost:8080 -o output.file`
 
 ### See also
- *  [GWCD for unpacking/decompiling wigo container](https://github.com/mrummuka/gwcd)
+ *  [Unluac](https://sourceforge.net/projects/unluac/)
+ *  [openfaas](https://github.com/openfaas/faas)
+ *  [function watchdog](https://github.com/openfaas/faas/tree/master/watchdog)
 
 Licence
 -------
-See unluac_licence.txt
+* MIT
+  * Unluac: ./unluac_licence.txt
+  * fwatchdog: ./unluac-docker-faas/openfaas_licence.txt
 
 Sources
 -------
-[1] https://sourceforge.net/projects/unluac/
+[1] https://sourceforge.net/projects/unluac
+
+[2] https://github.com/openfaas/faas/tree/master/watchdog
