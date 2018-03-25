@@ -1,13 +1,13 @@
-# unluac: Luac decompiler 
+# unluac-d: Dockerized Luac decompiler 
 
-Unluac-d - a dockerized version of unluac for decompiling luac files from wherigo containers regardless of the execution environment. 
+Dockerized versions of [unluac](https://sourceforge.net/projects/unluac/) for decompiling luac files from wherigo containers regardless of the execution environment. 
 
-Currently, consists of an old binary version of [unluac](https://sourceforge.net/projects/unluac/) (`unluac_2015_06_13.jar`) dockerized, in two different ways:
-* `unluac-docker/` a dockerfile for creating standard docker image that
-  * reads input (luac file) from bind-mount and 
+Currently, dockerizes an old binary version `unluac_2015_06_13.jar` in two ways:
+* `unluac-docker/` a dockerfile for creating 'standard' docker image that
+  * reads input (luac file to decompile) from bind-mount and 
   * prints results to STDOUT
-* `unluac-docker-faas/` a dockerfile for creating "function-as-a-service" docker image where unluac is wrapped with [OpenFaas](https://github.com/openfaas/faas)'s [function watchdog](https://github.com/openfaas/faas/tree/master/watchdog) to 
-  * read input (luac file) from HTTP POST request
+* `unluac-docker-faas/` a dockerfile (based on unloac-docker) for creating "function-as-a-service" docker image where unluac is wrapped with [OpenFaas](https://github.com/openfaas/faas)'s [function watchdog](https://github.com/openfaas/faas/tree/master/watchdog) to 
+  * read input (luac file to decompile) from HTTP POST request
   * send results to HTTP POST response
 
 The purpose is to make it easy to decompile luac files extracted from wherigo containers regardless of the execution environment.
@@ -32,9 +32,9 @@ The purpose is to make it easy to decompile luac files extracted from wherigo co
   
 #### Start docker container
 
-    `docker run --rm -p 8080:8080 mrummuka/unluac-docker-faas:latest`
+  `docker run --rm -p 8080:8080 mrummuka/unluac-docker-faas:latest`
 
-#### Decompile using "faas" docker container
+#### Decompile using unluac-docker-faas
     `curl -XPOST --data-binary @cartridge.luac localhost:8080 -o output.file`
 
 ### See also
@@ -45,8 +45,8 @@ The purpose is to make it easy to decompile luac files extracted from wherigo co
 Licence
 -------
 * MIT
-  * Unluac: ./unluac_licence.txt
-  * fwatchdog: ./unluac-docker-faas/openfaas_licence.txt
+  * Unluac: unluac-docker/unluac_licence.txt
+  * fwatchdog: unluac-docker-faas/openfaas_licence.txt
 
 Sources
 -------
